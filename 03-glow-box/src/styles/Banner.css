@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #fff0f6;
+  color: #1f2937;
+}
+
+.glow-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 28px 24px;
+  background: linear-gradient(90deg, #f9a8d4, #c084fc);
+  color: #fff;
+  text-align: left;
+  box-shadow: 0 4px 16px rgba(192, 132, 252, 0.4);
+}
+
+.glow-logo {
+  height: 80px;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.glow-title {
+  margin: 0;
+  font-size: 40px;
+  letter-spacing: 3px;
+}
+
+.glow-subtitle {
+  margin: 8px 0 0;
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+@media (max-width: 600px) {
+  .glow-banner { flex-direction: column; text-align: center; }
+  .glow-title { font-size: 30px; }
+}
