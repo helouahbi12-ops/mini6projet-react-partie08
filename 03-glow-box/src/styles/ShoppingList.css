@@ -1,22 +1,154 @@
-.glow-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 28px 24px 0;
-  color: #9d174d;
-  font-weight: bold;
-  font-size: 18px;
+.glow-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 24px 56px;
+  box-sizing: border-box;
 }
 
-.glow-filter {
-  padding: 9px 20px;
+.glow-section-title {
+  margin: 0 0 20px;
+  text-align: center;
+  font-size: 28px;
+  color: #9d174d;
+}
+
+/* ---------- Catégories ---------- */
+.glow-cat-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.glow-cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 130px;
+  padding: 16px 10px;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(236, 72, 153, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.glow-cat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(236, 72, 153, 0.28);
+}
+
+.glow-cat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: #fce7f3;
+  font-size: 26px;
+}
+
+.glow-cat-name {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  color: #9d174d;
+}
+
+.glow-cat-count {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.glow-cat-card-active {
+  border-color: #ec4899;
+  background: linear-gradient(180deg, #fdf2f8, #f3e8ff);
+}
+
+.glow-cat-card-active .glow-cat-icon {
+  background: linear-gradient(135deg, #ec4899, #a855f7);
+}
+
+/* ---------- Recherche + tri ---------- */
+.glow-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.glow-search {
+  flex: 1;
+  min-width: 220px;
+  padding: 12px 18px;
+  border: 2px solid #f9a8d4;
+  border-radius: 24px;
+  background: #fff;
+  color: #374151;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.glow-search:focus {
+  border-color: #ec4899;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.15);
+}
+
+.glow-sort {
+  padding: 12px 18px;
   border: 2px solid #f9a8d4;
   border-radius: 24px;
   background: #fff;
   color: #9d174d;
   font-size: 15px;
+  cursor: pointer;
+  outline: none;
+}
+
+.glow-sort:focus {
+  border-color: #ec4899;
+}
+
+/* ---------- Barre de filtres ---------- */
+.glow-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(236, 72, 153, 0.12);
+}
+
+.glow-toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.glow-toolbar-label {
+  margin-right: 4px;
+  font-weight: bold;
+  color: #9d174d;
+}
+
+.glow-filter {
+  padding: 8px 18px;
+  border: 2px solid #f9a8d4;
+  border-radius: 24px;
+  background: #fff;
+  color: #9d174d;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -32,16 +164,95 @@
   box-shadow: 0 4px 10px rgba(236, 72, 153, 0.4);
 }
 
-.glow-product-list {
+.glow-filter-best {
+  border-color: #fbbf24;
+  color: #92400e;
+}
+
+.glow-filter-best:hover {
+  background: #fef3c7;
+}
+
+.glow-filter-best.glow-filter-active {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+}
+
+.glow-filter-fav {
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.glow-filter-fav:hover {
+  background: #fee2e2;
+}
+
+.glow-filter-fav.glow-filter-active {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+}
+
+/* ---------- Compteur + reset ---------- */
+.glow-count {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: 28px;
-  list-style: none;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0 18px;
+  color: #6b21a8;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.glow-reset {
+  padding: 6px 16px;
+  border: 2px solid #ef4444;
+  border-radius: 20px;
+  background: #fff;
+  color: #b91c1c;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.glow-reset:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* ---------- Grille des produits ---------- */
+.glow-product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
   margin: 0;
-  padding: 36px 24px 48px;
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.glow-product-list .glow-product-item {
+  width: auto;
+}
+
+.glow-empty {
+  padding: 60px 24px;
+  text-align: center;
+  font-size: 20px;
+  color: #9d174d;
+}
+
+@media (max-width: 700px) {
+  .glow-cat-row {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+
+  .glow-cat-card {
+    flex-shrink: 0;
+  }
 }

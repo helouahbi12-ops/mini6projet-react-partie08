@@ -1,10 +1,29 @@
 import CareScale from "./CareScale";
 import "../styles/ProductItem.css";
 
-function ProductItem({ id, cover, brand, name, category, skin, hydration, protection, bestSeller }) {
+function ProductItem({
+  id,
+  cover,
+  brand,
+  name,
+  category,
+  skin,
+  hydration,
+  protection,
+  bestSeller,
+  isFavorite,
+  onToggleFavorite,
+}) {
   return (
     <li key={id} className="glow-product-item">
       {bestSeller && <span className="glow-badge">⭐ Best Seller</span>}
+      <button
+        className={isFavorite ? "glow-heart glow-heart-active" : "glow-heart"}
+        onClick={() => onToggleFavorite(id)}
+        aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+      >
+        {isFavorite ? "❤️" : "🤍"}
+      </button>
       <img className="glow-product-item-cover" src={cover} alt={`${name} cover`} />
       <span className="glow-product-category">{category}</span>
       <span className="glow-product-brand">{brand}</span>
