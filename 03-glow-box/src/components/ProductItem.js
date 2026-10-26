@@ -1,8 +1,8 @@
+import { useState } from "react";
 import CareScale from "./CareScale";
 import "../styles/ProductItem.css";
 
 function ProductItem({
-  id,
   cover,
   brand,
   name,
@@ -11,16 +11,15 @@ function ProductItem({
   hydration,
   protection,
   bestSeller,
-  isFavorite,
-  onToggleFavorite,
 }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
   return (
-    <li key={id} className="glow-product-item">
+    <li className="glow-product-item">
       {bestSeller && <span className="glow-badge">⭐ Best Seller</span>}
       <button
         className={isFavorite ? "glow-heart glow-heart-active" : "glow-heart"}
-        onClick={() => onToggleFavorite(id)}
-        aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+        onClick={() => setIsFavorite(!isFavorite)}
       >
         {isFavorite ? "❤️" : "🤍"}
       </button>

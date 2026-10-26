@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guide Pédagogique Interactif - Activité N°4 : Jeu de Dé (React JS)</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-bg: #eff6ff;
+      --success: #15803d;
+      --success-bg: #dcfce7;
+      --warning: #b45309;
+      --warning-bg: #fef3c7;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f1f5f9;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* TOP HEADER */
+    .top-banner {
+      background: linear-gradient(135deg, #0f172a, #1e40af);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .top-banner h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .top-banner p {
+      margin: 4px 0 0;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .progress-container {
+      background: rgba(255,255,255,0.15);
+      padding: 10px 18px;
+      border-radius: 10px;
+      min-width: 240px;
+    }
+
+    .progress-text {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #4ade80;
+      width: 12.5%;
+      transition: width 0.3s ease;
+    }
+
+    /* MAIN LAYOUT */
+    .main-wrapper {
+      max-width: 1350px;
+      margin: 25px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 260px 1fr 380px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 1150px) {
+      .main-wrapper {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LEFT SIDEBAR : STEP NAVIGATION */
+    .sidebar {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .sidebar h3 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      color: var(--primary);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .step-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .step-item:hover {
+      background: var(--primary-bg);
+      color: var(--primary);
+    }
+
+    .step-item.active {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: var(--dark);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-item.active .step-num {
+      background: white;
+      color: var(--primary);
+    }
+
+    /* CENTER : SLIDE CONTENT */
+    .slide-card {
+      background: white;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 28px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    }
+
+    .slide-badge {
+      display: inline-block;
+      background: var(--primary-bg);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .slide-title {
+      margin: 0 0 18px;
+      font-size: 1.45rem;
+      color: var(--dark);
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 12px;
+    }
+
+    /* PEDAGOGICAL BOXES */
+    .coach-speech {
+      background: var(--primary-bg);
+      border-left: 5px solid var(--primary-light);
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 0.98rem;
+    }
+
+    .coach-speech strong {
+      color: var(--primary);
+    }
+
+    .action-box {
+      background: var(--warning-bg);
+      border-left: 5px solid var(--warning);
+      padding: 16px 18px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .action-box h4 {
+      margin: 0 0 8px;
+      color: var(--warning);
+      font-size: 1rem;
+    }
+
+    .cheer-box {
+      background: var(--success-bg);
+      border-left: 5px solid var(--success);
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin: 18px 0;
+      color: #065f46;
+      font-weight: 500;
+    }
+
+    .logic-steps {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+    }
+
+    .logic-steps ol, .action-box ul, .action-box ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+
+    .logic-steps li, .action-box li {
+      margin-bottom: 8px;
+    }
+
+    /* CODE & EXPLANATION TABLE */
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin: 12px 0;
+    }
+
+    code {
+      background: #e2e8f0;
+      color: #be123c;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.88em;
+    }
+
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    .explain-list {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-top: 12px;
+    }
+
+    .explain-list h5 {
+      margin: 0 0 10px;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+
+    .explain-item {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.92rem;
+    }
+
+    .explain-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    /* HIDDEN SOLUTION AREA */
+    .reveal-section {
+      margin-top: 20px;
+      border-top: 2px dashed var(--border);
+      padding-top: 18px;
+    }
+
+    .hidden-solution {
+      display: none;
+      margin-top: 15px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: #1e3a8a; }
+
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    .btn-outline:hover { background: var(--primary-bg); }
+
+    .btn-hint {
+      background: #0d9488;
+      color: white;
+      width: 100%;
+      justify-content: center;
+      padding: 12px;
+      font-size: 0.95rem;
+    }
+    .btn-hint:hover { background: #0f766e; }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 26px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* RIGHT COLUMN : LIVE FRAME SIMULATOR */
+    .simulator-panel {
+      background: white;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      position: sticky;
+      top: 20px;
+    }
+
+    .browser-header {
+      background: #e2e8f0;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .dot.red { background: #ef4444; }
+    .dot.yellow { background: #f59e0b; }
+    .dot.green { background: #22c55e; }
+
+    .browser-url {
+      background: white;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      color: #475569;
+      flex: 1;
+      border: 1px solid #cbd5e1;
+      font-family: monospace;
+    }
+
+    .sim-controls {
+      background: #f8fafc;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    .sim-mode-btns {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .sim-mode-btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+      background: white;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .sim-mode-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .sim-props-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eff6ff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .sim-viewport {
+      padding: 25px 22px;
+      min-height: 360px;
+      background: white;
+    }
+
+    .react-btn {
+      padding: 6px 14px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: 1px solid #94a3b8;
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .react-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .state-inspector {
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      border-top: 1px solid #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BANNER -->
+  <header class="top-banner">
+    <div>
+      <h1>🎲 Activité N°4 : Réalisation du Jeu de Dé (React JS)</h1>
+      <p>Guide d'accompagnement pas-à-pas : Réfléchir avec logique, coder étape par étape et tester en direct</p>
+    </div>
+    <div class="progress-container">
+      <div class="progress-text">
+        <span>Progression de l'activité</span>
+        <span id="progressLabel">Étape 1 / 8</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrapper">
+
+    <!-- LEFT SIDEBAR : STEPS -->
+    <aside class="sidebar">
+      <h3>📋 Étapes du Projet</h3>
+      <ul class="step-list" id="stepMenu"></ul>
+    </aside>
+
+    <!-- CENTER : CURRENT SLIDE -->
+    <main class="slide-card">
+      <span class="slide-badge" id="slideBadge">Étape 1 sur 8</span>
+      <h2 class="slide-title" id="slideTitle">Chargement...</h2>
+
+      <div id="slideContent"></div>
+
+      <!-- STEP SOLUTION TOGGLE -->
+      <div class="reveal-section" id="revealSection">
+        <button class="btn btn-hint" id="toggleSolBtn" onclick="toggleStepSolution()">
+          👀 J'ai essayé tout seul ! Voir le code et l'explication de cette étape
+        </button>
+        <div class="hidden-solution" id="stepSolutionBox"></div>
+      </div>
+
+      <!-- FOOTER NAVIGATION -->
+      <div class="slide-footer">
+        <button class="btn btn-outline" id="prevBtn" onclick="navigateStep(-1)">⬅ Étape précédente</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="navigateStep(1)">Étape suivante ➔</button>
+      </div>
+    </main>
+
+    <!-- RIGHT : LIVE FRAME SIMULATOR -->
+    <section class="simulator-panel">
+      <div class="browser-header">
+        <div class="browser-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="browser-url">http://localhost:3000</div>
+      </div>
+
+      <div class="sim-controls">
+        <div class="sim-mode-btns">
+          <button class="sim-mode-btn active" id="btnModeQ1" onclick="switchSimMode(1)">
+            Question 1 (Image fixe)
+          </button>
+          <button class="sim-mode-btn" id="btnModeQ2" onclick="switchSimMode(2)">
+            Question 2 (Faces 1 à 6)
+          </button>
+        </div>
+        <div class="sim-props-bar">
+          <span>Prop envoyée : <code>&lt;JeuDe cache={...} /&gt;</code></span>
+          <select id="simCacheSelect" onchange="updateCacheProp()" style="padding:2px 6px; border-radius:4px;">
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- LIVE REACT RENDER -->
+      <div class="sim-viewport">
+        <div id="simImageWrapper" style="width:120px; height:120px;"></div>
+        <h1 style="margin: 12px 0 8px; font-size: 1.75rem;">Jeu de Dé...</h1>
+        <h2 style="margin: 8px 0; font-size: 1.3rem;">Face: <span id="simFace"></span></h2>
+        <h2 style="margin: 8px 0 16px; font-size: 1.3rem;">Nombre d'essais : <span id="simCompteur">0</span></h2>
+
+        <button class="react-btn" id="simBtnJouer" onclick="simJouer()">Jouer</button>
+
+        <p id="simBravoMsg" style="display:none; font-weight:600; color:#15803d; margin: 14px 0;">
+          Bravo vous avez trouvez la face cachée.....
+        </p>
+        <button class="react-btn" id="simBtnInit" onclick="simInitialiser()" style="display:none;">
+          Initialiser
+        </button>
+      </div>
+
+      <!-- LIVE STATE INSPECTOR -->
+      <div class="state-inspector">
+        <div style="color:#94a3b8; margin-bottom:4px;">// État (this.state) en direct :</div>
+        <div id="simStateDisplay">this.state = { face: null, compteur: 0, fin: false }</div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONTENU PÉDAGOGIQUE COMPLET (100% EN FRANÇAIS TRÈS SIMPLE)
+    // =========================================================================
+    const stepsData = [
+      {
+        MenuTitle: "1. Comprendre le problème",
+        title: "Comprendre le problème avant de coder",
+        content: `
+          <div class="coach-speech">
+            <strong>D'accord mon ami ! Nous avons un petit défi aujourd'hui.</strong><br>
+            Avant d'écrire une seule ligne de code, un bon développeur commence toujours par bien comprendre le problème. Regarde le simulateur à droite et clique sur le bouton <b>"Jouer"</b> plusieurs fois pour voir comment fonctionne le jeu !
+          </div>
+
+          <div class="logic-steps">
+            <strong>🔍 Décomposons notre problème très simplement :</strong>
+            <ol>
+              <li>Au début du jeu, nous donnons un <b>numéro secret</b> au composant (par exemple le numéro <b>2</b>). C'est la <i>face cachée</i>.</li>
+              <li>Sur l'écran, l'utilisateur voit une image de dé, la <b>Face</b> (vide au début), le <b>Nombre d'essais</b> (qui commence à <b>0</b>) et un bouton <b>"Jouer"</b>.</li>
+              <li>À chaque fois qu'il clique sur <b>"Jouer"</b> :
+                <ul>
+                  <li>L'ordinateur choisit un numéro aléatoire entre <b>1 et 6</b>.</li>
+                  <li>Le <b>Nombre d'essais</b> augmente de <b>1</b>.</li>
+                </ul>
+              </li>
+              <li><b>Condition de victoire :</b> Si le numéro aléatoire est égal au numéro secret (2) :
+                <ul>
+                  <li>Le bouton <b>"Jouer"</b> disparaît !</li>
+                  <li>Un message apparaît : <i>"Bravo vous avez trouvez la face cachée....."</i></li>
+                  <li>Un bouton <b>"Initialiser"</b> apparaît pour recommencer à zéro.</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+
+          <div class="cheer-box">
+            💪 <b>C'est très clair, n'est-ce pas ?</b> Quand tu divises un grand problème en petites étapes simples, tout devient facile. Passons maintenant à la création des dossiers sur ton ordinateur !
+          </div>
+        `,
+        hasSolution: false,
+        solutionHTML: ``
+      },
+
+      {
+        MenuTitle: "2. Créer dossiers & fichiers",
+        title: "Action 1 : Organiser les dossiers et les fichiers",
+        content: `
+          <div class="coach-speech">
+            <strong>D'accord mon ami, maintenant nous devons commencer par organiser notre projet React sur ton ordinateur.</strong><br>
+            Dans un projet React (Create React App), tout notre travail se passe dans le dossier <code>src</code>.
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Ce que tu dois faire maintenant sur ton ordinateur :</h4>
+            <ol>
+              <li>Ouvre ton projet React dans VS Code et va dans le dossier <b><code>src</code></b>.</li>
+              <li>À l'intérieur de <code>src</code>, <b>crée un premier dossier</b> nommé <b><code>assets</code></b>.
+                <br>👉 <i>Mets dans ce dossier les 7 images du jeu :</i> <code>de.jpg</code>, <code>face1.png</code>, <code>face2.png</code>, <code>face3.png</code>, <code>face4.png</code>, <code>face5.png</code> et <code>face6.png</code>.
+              </li>
+              <li>Toujours à l'intérieur de <code>src</code>, <b>crée un deuxième dossier</b> nommé <b><code>components</code></b>.</li>
+              <li>À l'intérieur du dossier <code>components</code>, <b>crée un fichier</b> nommé <b><code>JeuDe.js</code></b>.</li>
+            </ol>
+          </div>
+
+          <div class="cheer-box">
+            🌟 <b>Super !</b> Ton espace de travail est propre et bien organisé. Clique sur le bouton ci-dessous pour vérifier que tu as la bonne structure de fichiers.
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>mon-projet-react/
+ └── src/
+      ├── assets/
+      │    ├── de.jpg
+      │    ├── face1.png
+      │    ├── face2.png
+      │    ├── face3.png
+      │    ├── face4.png
+      │    ├── face5.png
+      │    └── face6.png
+      ├── components/
+      │    └── JeuDe.js
+      └── index.js</code></pre>
+          <div class="explain-list">
+            <h5>💡 Pourquoi cette organisation ?</h5>
+            <div class="explain-item"><b>Le dossier <code>assets</code> :</b> Il sert à ranger toutes les images de notre application.</div>
+            <div class="explain-item"><b>Le dossier <code>components</code> :</b> Il contient nos composants React comme <code>JeuDe.js</code>.</div>
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "3. Coder le fichier index.js",
+        title: "Action 2 : Préparer le fichier src/index.js",
+        content: `
+          <div class="coach-speech">
+            <strong>Maintenant mon ami, nous allons commencer par le fichier <code>src/index.js</code>.</strong><br>
+            Pourquoi commence-t-on par <code>index.js</code> ? Parce que c'est le point de départ qui va afficher notre composant <code>JeuDe</code> et lui donner le numéro secret caché grâce aux <b><code>props</code></b> !
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Ce que tu dois faire dans <code>src/index.js</code> :</h4>
+            <ol>
+              <li>Ouvre le fichier <b><code>src/index.js</code></b>.</li>
+              <li>Importe <code>React</code> et <code>ReactDOM</code>.</li>
+              <li>Importe ton composant <b><code>JeuDe</code></b> depuis <code>'./components/JeuDe'</code>.</li>
+              <li>Dans la fonction <code>App()</code>, appelle le composant en lui passant la propriété (prop) <b><code>cache={2}</code></b>.</li>
+            </ol>
+          </div>
+
+          <div class="cheer-box">
+            🧠 <b>Réfléchis une seconde :</b> Comment écrit-on une balise de composant React avec une prop nommée <code>cache</code> qui vaut <code>2</code> ? Essaie de l'écrire dans ton fichier, puis vérifie la réponse ci-dessous !
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>// Fichier : src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import JeuDe from './components/JeuDe';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;JeuDe cache={2} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+root.render(&lt;App /&gt;);</code></pre>
+          <div class="explain-list">
+            <h5>📖 Explication ligne par ligne (Très simple) :</h5>
+            <div class="explain-item">
+              <code>import JeuDe from './components/JeuDe';</code><br>
+              On cherche le composant <b>JeuDe</b> qui se trouve dans le dossier <b>components</b>.
+            </div>
+            <div class="explain-item">
+              <code>&lt;JeuDe cache={2} /&gt;</code><br>
+              On affiche le composant <b>JeuDe</b> et on lui envoie le numéro secret <b>2</b> dans une boîte appelée <b><code>cache</code></b>. À l'intérieur de <code>JeuDe.js</code>, on pourra lire ce numéro avec <b><code>this.props.cache</code></b>.
+            </div>
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "4. Créer la classe et le state",
+        title: "Action 3 : Créer le squelette et la mémoire (state) dans JeuDe.js",
+        content: `
+          <div class="coach-speech">
+            <strong>Excellent travail mon ami ! Maintenant, ouvre le fichier <code>src/components/JeuDe.js</code>.</strong><br>
+            Nous allons commencer la <b>Question 1</b>. En React, quand une information change à l'écran (sans recharger la page), où doit-on la stocker ? Dans le <b><code>state</code></b> (l'état du composant) !
+          </div>
+
+          <div class="logic-steps">
+            <strong>🧠 Trouvons ensemble ce qu'on doit mettre dans <code>this.state</code> :</strong>
+            <ol>
+              <li><b><code>face</code> :</b> C'est le numéro du dé obtenu. Avant de cliquer sur "Jouer", il n'y a aucun numéro. Donc au début : <b><code>face: null</code></b>.</li>
+              <li><b><code>compteur</code> :</b> C'est le nombre d'essais. Au début du jeu, le joueur a fait 0 essai. Donc : <b><code>compteur: 0</code></b>.</li>
+              <li><b><code>fin</code> :</b> C'est un booléen (vrai ou faux) qui dit si le jeu est terminé. Au début, le jeu n'est pas fini. Donc : <b><code>fin: false</code></b>.</li>
+            </ol>
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Ce que tu dois faire dans <code>src/components/JeuDe.js</code> :</h4>
+            <ol>
+              <li>En haut du fichier, importe <code>{ Component }</code> depuis <code>"react"</code>.</li>
+              <li>Importe aussi l'image principale du dé : <code>import de from '../assets/de.jpg';</code></li>
+              <li>Crée la classe <code>export default class JeuDe extends Component</code>.</li>
+              <li>Écris le <code>constructor(props)</code> avec <code>super(props);</code> et initialise <code>this.state</code> avec les 3 valeurs : <code>face</code>, <code>compteur</code>, et <code>fin</code>.</li>
+            </ol>
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>// Début du fichier : src/components/JeuDe.js
+import { Component } from "react";
+import de from '../assets/de.jpg';
+
+export default class JeuDe extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { face: null, compteur: 0, fin: false };
+  }
+}</code></pre>
+          <div class="explain-list">
+            <h5>📖 Explication ligne par ligne :</h5>
+            <div class="explain-item">
+              <code>import de from '../assets/de.jpg';</code><br>
+              Les deux points <code>..</code> veulent dire : "Sors du dossier <code>components</code>, puis entre dans le dossier <code>assets</code> pour prendre l'image <code>de.jpg</code>".
+            </div>
+            <div class="explain-item">
+              <code>super(props);</code><br>
+              Obligatoire dans le constructeur en React pour pouvoir utiliser <code>this.props</code>.
+            </div>
+            <div class="explain-item">
+              <code>this.state = { face: null, compteur: 0, fin: false };</code><br>
+              C'est la mémoire initiale de notre jeu avant le premier clic.
+            </div>
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "5. Coder jouer() & initialiser()",
+        title: "Action 4 : Programmer la logique de jouer() et initialiser()",
+        content: `
+          <div class="coach-speech">
+            <strong>Tu avances super bien mon ami ! Voici l'étape la plus importante pour ton cerveau de programmeur.</strong><br>
+            Que doit faire exactement la méthode <b><code>jouer()</code></b> quand l'utilisateur clique sur le bouton "Jouer" ? Réfléchissons étape par étape !
+          </div>
+
+          <div class="logic-steps">
+            <strong>⚙️ Les 4 petites actions à l'intérieur de <code>jouer()</code> :</strong>
+            <ol>
+              <li><b>Tirer un nombre au hasard entre 1 et 6 :</b><br>
+                En JavaScript, on écrit : <code>const valeur = Math.floor(Math.random() * 6) + 1;</code>
+              </li>
+              <li><b>Augmenter le compteur d'essais de 1 :</b><br>
+                On prend l'ancien compteur et on ajoute 1 : <code>let val = this.state.compteur + 1;</code>
+              </li>
+              <li><b>Vérifier si le joueur a gagné :</b><br>
+                On compare le numéro secret (<code>this.props.cache</code>) avec le numéro tiré (<code>valeur</code>).<br>
+                Si <code>this.props.cache == valeur</code> alors <code>true</code> (gagné !), sinon <code>false</code>.
+              </li>
+              <li><b>Mettre à jour la mémoire (<code>this.setState</code>) :</b><br>
+                On enregistre les nouvelles valeurs dans <code>face</code>, <code>compteur</code> et <code>fin</code> !
+              </li>
+            </ol>
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Ce que tu dois faire maintenant :</h4>
+            <ul>
+              <li>Ajoute la méthode <b><code>jouer()</code></b> juste en dessous du <code>constructor</code>.</li>
+              <li>Ajoute aussi la méthode <b><code>initialiser()</code></b> qui remet tout à zéro avec <code>this.setState({ face: null, compteur: 0, fin: false });</code>.</li>
+            </ul>
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>  jouer() {
+    const valeur = Math.floor(Math.random() * 6) + 1;
+    let val = this.state.compteur + 1;
+    let bool = (this.props.cache == valeur ? true : false);
+    this.setState({ face: valeur, compteur: val, fin: bool });
+  }
+
+  initialiser() {
+    this.setState({ face: null, compteur: 0, fin: false });
+  }</code></pre>
+          <div class="explain-list">
+            <h5>📖 Explication très simple de chaque ligne :</h5>
+            <div class="explain-item">
+              <code>Math.floor(Math.random() * 6) + 1</code><br>
+              <code>Math.random() * 6</code> donne un chiffre à virgule entre 0 et 5.99. <code>Math.floor()</code> enlève la virgule (0 à 5), et <code>+ 1</code> donne un nombre entier entre <b>1 et 6</b>.
+            </div>
+            <div class="explain-item">
+              <code>let bool = (this.props.cache == valeur ? true : false);</code><br>
+              C'est une question simple : "Est-ce que le numéro secret est égal au dé ?". Si oui, <code>bool</code> reçoit <code>true</code> (le jeu est fini). Sinon, il reçoit <code>false</code>.
+            </div>
+            <div class="explain-item">
+              <code>this.setState({ face: valeur, compteur: val, fin: bool });</code><br>
+              <b>Très important :</b> En React, on utilise toujours <code>this.setState()</code> pour modifier le state et mettre à jour l'écran automatiquement.
+            </div>
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "6. Coder la méthode render()",
+        title: "Action 5 : Afficher l'interface dans render() (Fin Question 1)",
+        content: `
+          <div class="coach-speech">
+            <strong>Bravo mon ami ! Il ne nous reste plus qu'à dessiner l'écran avec la méthode <code>render()</code> pour terminer la Question 1.</strong><br>
+            Observe bien ce qui se passe quand tu gagnes dans le simulateur à droite : le bouton "Jouer" disparaît, et à la place on voit la phrase "Bravo..." et le bouton "Initialiser".
+          </div>
+
+          <div class="logic-steps">
+            <strong>💡 Comment afficher ou cacher un élément en React (JSX) ?</strong>
+            <p style="margin:6px 0;">On utilise l'opérateur logique <b><code>&&</code></b> :</p>
+            <ul>
+              <li><b>Quand le jeu N'EST PAS fini (<code>!this.state.fin</code>) :</b><br>
+                Le point d'exclamation <code>!</code> veut dire <b>NON (inverse)</b>. Si <code>fin</code> est <code>false</code>, alors <code>!this.state.fin</code> est vrai ➔ On affiche le bouton <b>Jouer</b>.
+              </li>
+              <li><b>Quand le jeu EST fini (<code>this.state.fin</code>) :</b><br>
+                Si <code>fin</code> est <code>true</code> ➔ On affiche le paragraphe <code>&lt;p&gt;Bravo...&lt;/p&gt;</code> et le bouton <b>Initialiser</b>.
+              </li>
+            </ul>
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Ce que tu dois faire dans <code>JeuDe.js</code> :</h4>
+            <p style="margin:0;">Ajoute la méthode <code>render()</code> à la fin de ta classe <code>JeuDe</code> avec l'image <code>de</code>, les titres <code>h1</code> / <code>h2</code> et les conditions <code>&&</code>.</p>
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>  render() {
+    return (
+      &lt;div&gt;
+        &lt;img src={de} style={{ width: 120, height: 120 }} /&gt;
+        &lt;h1&gt;Jeu de Dé...&lt;/h1&gt;
+        &lt;h2&gt;Face: {this.state.face}&lt;/h2&gt;
+        &lt;h2&gt;Nombre d'essais: {this.state.compteur}&lt;/h2&gt;
+
+        {!this.state.fin && &lt;button onClick={() =&gt; this.jouer()}&gt;Jouer&lt;/button&gt;}
+
+        {this.state.fin && &lt;p&gt;Bravo vous avez trouvez la face cachée.....&lt;/p&gt;}
+
+        {this.state.fin && &lt;button onClick={() =&gt; this.initialiser()}&gt;Initialiser&lt;/button&gt;}
+      &lt;/div&gt;
+    );
+  }</code></pre>
+          <div class="explain-list">
+            <h5>📖 Explication ligne par ligne :</h5>
+            <div class="explain-item">
+              <code>style={{ width: 120, height: 120 }}</code><br>
+              En React JSX, pour mettre du style CSS directement, on utilise deux accolades <code>{{ ... }}</code>. Ici l'image mesure 120px sur 120px.
+            </div>
+            <div class="explain-item">
+              <code>onClick={() =&gt; this.jouer()}</code><br>
+              Quand l'utilisateur clique sur le bouton, cela exécute la méthode <code>this.jouer()</code>.
+            </div>
+          </div>
+          <div class="cheer-box">
+            🎉 <b>FÉLICITATIONS !</b> Tu viens de terminer toute la <b>Question 1</b> ! Lance ton projet avec <code>npm start</code> pour le voir tourner sur ton ordinateur !
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "7. Question 2 : getImage()",
+        title: "Action 6 : Question 2 — Afficher l'image de chaque face du dé",
+        content: `
+          <div class="coach-speech">
+            <strong>Tu es un champion ! Maintenant, passons à la Question 2 pour rendre notre jeu beaucoup plus joli.</strong><br>
+            Dans le simulateur à droite, clique sur le bouton <b>"Question 2 (Faces 1 à 6)"</b> en haut et clique sur "Jouer". Tu vois ? L'image change selon le numéro obtenu (1, 2, 3, 4, 5 ou 6) !
+          </div>
+
+          <div class="logic-steps">
+            <strong>🧠 Comment résoudre ce problème logiquement ?</strong>
+            <ol>
+              <li><b>Étape 1 :</b> En haut de <code>JeuDe.js</code>, on importe les 6 nouvelles images (<code>face1.png</code> jusqu'à <code>face6.png</code>) depuis le dossier <code>../assets/</code>.</li>
+              <li><b>Étape 2 :</b> On crée une nouvelle méthode appelée <b><code>getImage()</code></b> qui regarde la valeur de <code>this.state.face</code> avec un <b><code>switch</code></b> :
+                <ul>
+                  <li>Si <code>this.state.face</code> vaut <b>1</b> ➔ elle retourne <code>face1</code>.</li>
+                  <li>Si <code>this.state.face</code> vaut <b>2</b> ➔ elle retourne <code>face2</code>... (et ainsi de suite jusqu'à 6).</li>
+                  <li>Sinon (<code>default</code>, quand <code>face</code> est <code>null</code> au début) ➔ elle retourne l'image par défaut <code>de</code>.</li>
+                </ul>
+              </li>
+              <li><b>Étape 3 :</b> Dans <code>render()</code>, au lieu d'écrire <code>&lt;img src={de} ... /&gt;</code>, on appelle notre méthode : <b><code>&lt;img src={this.getImage()} ... /&gt;</code></b> !</li>
+            </ol>
+          </div>
+
+          <div class="action-box">
+            <h4>🛠️ Essaie d'ajouter les imports et la méthode <code>getImage()</code> tout seul avant de regarder la solution !</h4>
+          </div>
+        `,
+        hasSolution: true,
+        solutionHTML: `
+          <pre><code>// 1. En haut du fichier JeuDe.js, ajoute les 6 imports :
+import face1 from '../assets/face1.png';
+import face2 from '../assets/face2.png';
+import face3 from '../assets/face3.png';
+import face4 from '../assets/face4.png';
+import face5 from '../assets/face5.png';
+import face6 from '../assets/face6.png';
+
+// 2. À l'intérieur de la classe JeuDe, ajoute la méthode getImage() :
+  getImage() {
+    switch (this.state.face) {
+      case 1:
+        return face1;
+      case 2:
+        return face2;
+      case 3:
+        return face3;
+      case 4:
+        return face4;
+      case 5:
+        return face5;
+      case 6:
+        return face6;
+      default:
+        return de;
+    }
+  }
+
+// 3. Dans render(), modifie la balise img :
+  &lt;img src={this.getImage()} style={{ width: 120, height: 120 }} /&gt;</code></pre>
+          <div class="explain-list">
+            <h5>📖 Pourquoi utiliser <code>switch (this.state.face)</code> ?</h5>
+            <div class="explain-item">
+              Au lieu d'écrire 6 fois <code>if / else if</code>, le <code>switch</code> est beaucoup plus propre et facile à lire. Et le cas <code>default: return de;</code> s'occupe automatiquement du début du jeu quand <code>this.state.face</code> est encore égal à <code>null</code> !
+            </div>
+          </div>
+        `
+      },
+
+      {
+        MenuTitle: "8. Solution Finale Complète",
+        title: "Bravo ! Récapitulatif et Code Final Complet du Projet",
+        content: `
+          <div class="cheer-box" style="font-size:1.05rem;">
+            🏆 <b>FÉLICITATIONS MON AMI ! Tu as réussi toute l'Activité N°4 de A à Z !</b><br>
+            Plus important encore : tu as compris <b>comment réfléchir étape par étape</b> pour transformer un problème en code React logique. Tu peux utiliser exactement cette même méthode de réflexion pour tous tes prochains exercices !
+          </div>
+
+          <div class="coach-speech">
+            Voici ci-dessous le code complet final de tes fichiers (Question 1 et Question 2) pour que tu puisses vérifier tout ton projet d'un seul coup d'œil.
+          </div>
+
+          <h4>📄 1. Le code complet du fichier <code>src/index.js</code> :</h4>
+          <pre><code>import React from 'react';
+import ReactDOM from 'react-dom/client';
+import JeuDe from './components/JeuDe';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;JeuDe cache={2} /&gt;
+    &lt;/div&gt;
+  );
+}
+
+root.render(&lt;App /&gt;);</code></pre>
+
+          <h4>📄 2. Le code complet du fichier <code>src/components/JeuDe.js</code> (Version Finale - Question 2) :</h4>
+          <pre><code>import { Component } from "react";
+import de from '../assets/de.jpg';
+import face1 from '../assets/face1.png';
+import face2 from '../assets/face2.png';
+import face3 from '../assets/face3.png';
+import face4 from '../assets/face4.png';
+import face5 from '../assets/face5.png';
+import face6 from '../assets/face6.png';
+
+export default class JeuDe extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { face: null, compteur: 0, fin: false };
+  }
+
+  jouer() {
+    const valeur = Math.floor(Math.random() * 6) + 1;
+    let val = this.state.compteur + 1;
+    let bool = (this.props.cache == valeur ? true : false);
+    this.setState({ face: valeur, compteur: val, fin: bool });
+  }
+
+  getImage() {
+    switch (this.state.face) {
+      case 1:
+        return face1;
+      case 2:
+        return face2;
+      case 3:
+        return face3;
+      case 4:
+        return face4;
+      case 5:
+        return face5;
+      case 6:
+        return face6;
+      default:
+        return de;
+    }
+  }
+
+  initialiser() {
+    this.setState({ face: null, compteur: 0, fin: false });
+  }
+
+  render() {
+    return (
+      &lt;div&gt;
+        &lt;img src={this.getImage()} style={{ width: 120, height: 120 }} /&gt;
+        &lt;h1&gt;Jeu de Dé...&lt;/h1&gt;
+        &lt;h2&gt;Face: {this.state.face}&lt;/h2&gt;
+        &lt;h2&gt;Nombre d'essais: {this.state.compteur}&lt;/h2&gt;
+        {!this.state.fin && &lt;button onClick={() =&gt; this.jouer()}&gt;Jouer&lt;/button&gt;}
+        {this.state.fin && &lt;p&gt;Bravo vous avez trouvez la face cachée.....&lt;/p&gt;}
+        {this.state.fin && &lt;button onClick={() =&gt; this.initialiser()}&gt;Initialiser&lt;/button&gt;}
+      &lt;/div&gt;
+    );
+  }
+}</code></pre>
+        `,
+        hasSolution: false,
+        solutionHTML: ``
+      }
+    ];
+
+    // =========================================================================
+    // LOGIQUE DE NAVIGATION DU GUIDE
+    // =========================================================================
+    let currentStepIndex = 0;
+
+    function initMenu() {
+      const menuEl = document.getElementById('stepMenu');
+      menuEl.innerHTML = stepsData.map((step, idx) => `
+        <li class="step-item ${idx === currentStepIndex ? 'active' : ''}" onclick="goToStep(${idx})">
+          <span class="step-num">${idx + 1}</span>
+          <span>${step.MenuTitle.split('. ')[1]}</span>
+        </li>
+      `).join('');
+    }
+
+    function renderCurrentStep() {
+      const step = stepsData[currentStepIndex];
+      const total = stepsData.length;
+
+      // Update Header & Progress
+      document.getElementById('progressLabel').innerText = `Étape ${currentStepIndex + 1} / ${total}`;
+      document.getElementById('progressBar').style.width = `${((currentStepIndex + 1) / total) * 100}%`;
+
+      // Update Slide Content
+      document.getElementById('slideBadge').innerText = `Étape ${currentStepIndex + 1} sur ${total}`;
+      document.getElementById('slideTitle').innerText = step.title;
+      document.getElementById('slideContent').innerHTML = step.content;
+
+      // Update Solution Toggle Box
+      const revealSection = document.getElementById('revealSection');
+      const solBox = document.getElementById('stepSolutionBox');
+      const toggleBtn = document.getElementById('toggleSolBtn');
+
+      if (step.hasSolution) {
+        revealSection.style.display = 'block';
+        solBox.style.display = 'none';
+        solBox.innerHTML = step.solutionHTML;
+        toggleBtn.innerHTML = `👀 J'ai essayé tout seul ! Voir le code et l'explication de cette étape`;
+      } else {
+        revealSection.style.display = 'none';
+      }
+
+      // Update Buttons
+      document.getElementById('prevBtn').disabled = (currentStepIndex === 0);
+      document.getElementById('nextBtn').disabled = (currentStepIndex === total - 1);
+
+      // Auto-switch simulator mode on step 7 (Question 2)
+      if (currentStepIndex >= 6) {
+        switchSimMode(2);
+      }
+
+      initMenu();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function navigateStep(direction) {
+      const nextIdx = currentStepIndex + direction;
+      if (nextIdx >= 0 && nextIdx < stepsData.length) {
+        currentStepIndex = nextIdx;
+        renderCurrentStep();
+      }
+    }
+
+    function goToStep(index) {
+      currentStepIndex = index;
+      renderCurrentStep();
+    }
+
+    function toggleStepSolution() {
+      const solBox = document.getElementById('stepSolutionBox');
+      const toggleBtn = document.getElementById('toggleSolBtn');
+      if (solBox.style.display === 'none' || solBox.style.display === '') {
+        solBox.style.display = 'block';
+        toggleBtn.innerHTML = `🙈 Cacher la solution de cette étape`;
+      } else {
+        solBox.style.display = 'none';
+        toggleBtn.innerHTML = `👀 J'ai essayé tout seul ! Voir le code et l'explication de cette étape`;
+      }
+    }
+
+    // =========================================================================
+    // LOGIQUE DU SIMULATEUR EN DIRECT (LIVE FRAME)
+    // =========================================================================
+    let simState = { face: null, compteur: 0, fin: false };
+    let simCache = 2;
+    let simQuestionMode = 1; // 1 = Question 1 (image fixe), 2 = Question 2 (images dynamiques)
+
+    function renderDiceGraphic(faceValue) {
+      // Question 1 ou début du jeu (face === null) -> Image générale de.jpg
+      if (simQuestionMode === 1 || faceValue === null) {
+        return `
+          <svg viewBox="0 0 120 120" width="120" height="120">
+            <rect x="6" y="6" width="108" height="108" rx="20" fill="#1e293b" stroke="#0f172a" stroke-width="4"/>
+            <circle cx="36" cy="36" r="8" fill="#ffffff"/>
+            <circle cx="60" cy="60" r="9" fill="#ef4444"/>
+            <circle cx="84" cy="84" r="8" fill="#ffffff"/>
+            <circle cx="84" cy="36" r="6" fill="#94a3b8"/>
+            <circle cx="36" cy="84" r="6" fill="#94a3b8"/>
+            <text x="60" y="107" text-anchor="middle" fill="#cbd5e1" font-size="11" font-family="monospace">de.jpg</text>
+          </svg>
+        `;
+      }
+
+      // Question 2 -> Images face1.png à face6.png
+      const pipCoords = {
+        1: [[60, 60]],
+        2: [[35, 35], [85, 85]],
+        3: [[35, 35], [60, 60], [85, 85]],
+        4: [[35, 35], [85, 35], [35, 85], [85, 85]],
+        5: [[35, 35], [85, 35], [60, 60], [35, 85], [85, 85]],
+        6: [[35, 30], [85, 30], [35, 58], [85, 58], [35, 86], [85, 86]]
+      };
+
+      const circles = pipCoords[faceValue]
+        .map(([cx, cy]) => `<circle cx="${cx}" cy="${cy}" r="9" fill="#111827"/>`)
+        .join('');
+
+      return `
+        <svg viewBox="0 0 120 120" width="120" height="120">
+          <rect x="6" y="6" width="108" height="108" rx="20" fill="#f8fafc" stroke="#334155" stroke-width="5"/>
+          ${circles}
+          <text x="60" y="110" text-anchor="middle" fill="#64748b" font-size="10" font-family="monospace">face${faceValue}.png</text>
+        </svg>
+      `;
+    }
+
+    function updateSimulatorView() {
+      document.getElementById('simImageWrapper').innerHTML = renderDiceGraphic(simState.face);
+      document.getElementById('simFace').innerText = simState.face !== null ? simState.face : '';
+      document.getElementById('simCompteur').innerText = simState.compteur;
+
+      // Conditional rendering (!this.state.fin && ...)
+      document.getElementById('simBtnJouer').style.display = !simState.fin ? 'inline-block' : 'none';
+      document.getElementById('simBravoMsg').style.display = simState.fin ? 'block' : 'none';
+      document.getElementById('simBtnInit').style.display = simState.fin ? 'inline-block' : 'none';
+
+      // Live state inspector
+      document.getElementById('simStateDisplay').innerText =
+        `this.state = { face: ${simState.face}, compteur: ${simState.compteur}, fin: ${simState.fin} }`;
+    }
+
+    function simJouer() {
+      const valeur = Math.floor(Math.random() * 6) + 1;
+      let val = simState.compteur + 1;
+      let bool = (simCache == valeur ? true : false);
+      simState = { face: valeur, compteur: val, fin: bool };
+      updateSimulatorView();
+    }
+
+    function simInitialiser() {
+      simState = { face: null, compteur: 0, fin: false };
+      updateSimulatorView();
+    }
+
+    function switchSimMode(mode) {
+      simQuestionMode = mode;
+      document.getElementById('btnModeQ1').className = mode === 1 ? 'sim-mode-btn active' : 'sim-mode-btn';
+      document.getElementById('btnModeQ2').className = mode === 2 ? 'sim-mode-btn active' : 'sim-mode-btn';
+      updateSimulatorView();
+    }
+
+    function updateCacheProp() {
+      simCache = parseInt(document.getElementById('simCacheSelect').value, 10);
+      simInitialiser();
+    }
+
+    // Démarrage initial
+    renderCurrentStep();
+    updateSimulatorView();
+  </script>
+</body>
+</html>

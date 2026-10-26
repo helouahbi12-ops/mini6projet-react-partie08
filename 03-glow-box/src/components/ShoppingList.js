@@ -16,69 +16,52 @@ const categories = [
 ];
 
 function ShoppingList() {
-  const [selectedSkin, setSelectedSkin] = useState("Tous");
   const [selectedCategory, setSelectedCategory] = useState("Toutes");
+  const [selectedSkin, setSelectedSkin] = useState("Tous");
   const [onlyBestSellers, setOnlyBestSellers] = useState(false);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("default");
-  const [favorites, setFavorites] = useState([]);
-  const [onlyFavorites, setOnlyFavorites] = useState(false);
 
-  const filtered = productList.filter((product) => {
-    const matchSkin =
-      selectedSkin === "Tous" || product.skin === selectedSkin || product.skin === "toutes";
-    const matchCategory =
-      selectedCategory === "Toutes" || product.category === selectedCategory;
-    const matchBest = !onlyBestSellers || product.bestSeller;
-    const text = (product.brand + " " + product.name).toLowerCase();
-    const matchSearch = text.includes(search.trim().toLowerCase());
-    const matchFavorite = !onlyFavorites || favorites.includes(product.id);
-    return matchSkin && matchCategory && matchBest && matchSearch && matchFavorite;
-  });
-
-  const displayed = [...filtered].sort((a, b) => {
-    if (sortBy === "hydration") {
-      return b.hydration - a.hydration;
+  function isVisible(product) {
+    if (selectedCategory !== "Toutes" && product.category !== selectedCategory) {
+      return false;
     }
-    if (sortBy === "protection") {
-      return b.protection - a.protection;
+    if (
+      selectedSkin !== "Tous" &&
+      product.skin !== selectedSkin &&
+      product.skin !== "toutes"
+    ) {
+      return false;
     }
-    if (sortBy === "name") {
-      return a.name.localeCompare(b.name);
+    if (onlyBestSellers && !product.bestSeller) {
+      return false;
     }
-    return 0;
-  });
-
-  const hasFilter =
-    selectedSkin !== "Tous" ||
-    selectedCategory !== "Toutes" ||
-    onlyBestSellers ||
-    search !== "" ||
-    onlyFavorites ||
-    sortBy !== "default";
-
-  function resetFilters() {
-    setSelectedSkin("Tous");
-    setSelectedCategory("Toutes");
-    setOnlyBestSellers(false);
-    setSearch("");
-    setSortBy("default");
-    setOnlyFavorites(false);
+        const text = (product.brand + " " + product.name).toLowerCase();
+    if (!text.includes(search.toLowerCase())) {
+      return false;
+    }
+    return true;
   }
 
-  function toggleFavorite(id) {
-    if (favorites.includes(id)) {
-      setFavorites(favorites.filter((favoriteId) => favoriteId !== id));
-    } else {
-      setFavorites([...favorites, id]);
-    }
+  const visibleCount = productList.reduce(
+    (total, product) => (isVisible(product) ? total + 1 : total),
+    0
+  );
+
+  function resetFilters() {
+    setSelectedCategory("Toutes");
+    setSelectedSkin("Tous");
+    setOnlyBestSellers(false);
+    setSearch("");
   }
 
   function countCategory(name) {
     if (name === "Toutes") {
       return productList.length;
     }
-    return productList.filter((product) => product.category === name).length;
+    return productList.reduce(
+      (total, product) => (product.category === name ? total + 1 : total),
+      0
+    );
   }
 
   return (
@@ -98,7 +81,9 @@ function ShoppingList() {
           >
             <span className="glow-cat-icon">{category.icon}</span>
             <span className="glow-cat-name">{category.name}</span>
-            <span className="glow-cat-count">{countCategory(category.name)} produits</span>
+            <span className="glow-cat-count">
+              {countCategory(category.name)} produits
+            </span>
           </button>
         ))}
       </div>
@@ -111,16 +96,6 @@ function ShoppingList() {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-        <select
-          className="glow-sort"
-          value={sortBy}
-          onChange={(event) => setSortBy(event.target.value)}
-        >
-          <option value="default">Trier : par défaut</option>
-          <option value="hydration">Plus hydratant d'abord 💧</option>
-          <option value="protection">Plus protecteur d'abord 🛡️</option>
-          <option value="name">Nom (A → Z)</option>
-        </select>
       </div>
 
       <div className="glow-toolbar">
@@ -129,7 +104,11 @@ function ShoppingList() {
           {skinTypes.map((type) => (
             <button
               key={type}
-              className={type === selectedSkin ? "glow-filter glow-filter-active" : "glow-filter"}
+              className={
+                type === selectedSkin
+                  ? "glow-filter glow-filter-active"
+                  : "glow-filter"
+              }
               onClick={() => setSelectedSkin(type)}
             >
               {type}
@@ -147,50 +126,37 @@ function ShoppingList() {
           >
             ⭐ Best Sellers
           </button>
-          <button
-            className={
-              onlyFavorites
-                ? "glow-filter glow-filter-fav glow-filter-active"
-                : "glow-filter glow-filter-fav"
-            }
-            onClick={() => setOnlyFavorites(!onlyFavorites)}
-          >
-            ❤️ Mes favoris ({favorites.length})
-          </button>
         </div>
       </div>
 
       <div className="glow-count">
         <span>
-          {displayed.length} / {productList.length} produits affichés
+          {visibleCount} / {productList.length} produits affichés
         </span>
-        {hasFilter && (
-          <button className="glow-reset" onClick={resetFilters}>
-            ✕ Réinitialiser
-          </button>
-        )}
+        <button className="glow-reset" onClick={resetFilters}>
+          ✕ Réinitialiser
+        </button>
       </div>
 
-      {displayed.length === 0 ? (
+      {visibleCount === 0 ? (
         <p className="glow-empty">Aucun produit ne correspond à ta recherche.</p>
       ) : (
         <ul className="glow-product-list">
-          {displayed.map((product) => (
-            <ProductItem
-              key={product.id}
-              id={product.id}
-              cover={product.cover}
-              brand={product.brand}
-              name={product.name}
-              category={product.category}
-              skin={product.skin}
-              hydration={product.hydration}
-              protection={product.protection}
-              bestSeller={product.bestSeller}
-              isFavorite={favorites.includes(product.id)}
-              onToggleFavorite={toggleFavorite}
-            />
-          ))}
+          {productList.map((product) =>
+            isVisible(product) ? (
+              <ProductItem
+                key={product.id}
+                cover={product.cover}
+                brand={product.brand}
+                name={product.name}
+                category={product.category}
+                skin={product.skin}
+                hydration={product.hydration}
+                protection={product.protection}
+                bestSeller={product.bestSeller}
+              />
+            ) : null
+          )}
         </ul>
       )}
     </div>
