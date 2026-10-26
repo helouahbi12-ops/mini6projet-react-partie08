@@ -1,8 +1,8 @@
-import { useState } from "react";
 import CareScale from "./CareScale";
 import "../styles/ProductItem.css";
 
 function ProductItem({
+  children,
   cover,
   brand,
   name,
@@ -12,17 +12,10 @@ function ProductItem({
   protection,
   bestSeller,
 }) {
-  const [isFavorite, setIsFavorite] = useState(false);
-
   return (
     <li className="glow-product-item">
       {bestSeller && <span className="glow-badge">⭐ Best Seller</span>}
-      <button
-        className={isFavorite ? "glow-heart glow-heart-active" : "glow-heart"}
-        onClick={() => setIsFavorite(!isFavorite)}
-      >
-        {isFavorite ? "❤️" : "🤍"}
-      </button>
+      {children}
       <img className="glow-product-item-cover" src={cover} alt={`${name} cover`} />
       <span className="glow-product-category">{category}</span>
       <span className="glow-product-brand">{brand}</span>

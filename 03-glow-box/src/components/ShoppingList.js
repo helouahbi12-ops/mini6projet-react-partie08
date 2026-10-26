@@ -19,7 +19,9 @@ function ShoppingList() {
   const [selectedCategory, setSelectedCategory] = useState("Toutes");
   const [selectedSkin, setSelectedSkin] = useState("Tous");
   const [onlyBestSellers, setOnlyBestSellers] = useState(false);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [search, setSearch] = useState("");
+  const [favorites, setFavorites] = useState([]);
 
   function isVisible(product) {
     if (selectedCategory !== "Toutes" && product.category !== selectedCategory) {
@@ -35,7 +37,10 @@ function ShoppingList() {
     if (onlyBestSellers && !product.bestSeller) {
       return false;
     }
-        const text = (product.brand + " " + product.name).toLowerCase();
+    if (onlyFavorites && !favorites.includes(product.id)) {
+      return false;
+    }
+    const text = (product.brand + " " + product.name).toLowerCase();
     if (!text.includes(search.toLowerCase())) {
       return false;
     }
@@ -47,10 +52,24 @@ function ShoppingList() {
     0
   );
 
+  function toggleFavorite(id) {
+    if (favorites.includes(id)) {
+      setFavorites(
+        favorites.reduce(
+          (acc, favoriteId) => (favoriteId === id ? acc : acc.concat(favoriteId)),
+          []
+        )
+      );
+    } else {
+      setFavorites(favorites.concat(id));
+    }
+  }
+
   function resetFilters() {
     setSelectedCategory("Toutes");
     setSelectedSkin("Tous");
     setOnlyBestSellers(false);
+    setOnlyFavorites(false);
     setSearch("");
   }
 
@@ -126,6 +145,16 @@ function ShoppingList() {
           >
             ⭐ Best Sellers
           </button>
+          <button
+            className={
+              onlyFavorites
+                ? "glow-filter glow-filter-fav glow-filter-active"
+                : "glow-filter glow-filter-fav"
+            }
+            onClick={() => setOnlyFavorites(!onlyFavorites)}
+          >
+            ❤️ Mes favoris ({favorites.length})
+          </button>
         </div>
       </div>
 
@@ -154,7 +183,18 @@ function ShoppingList() {
                 hydration={product.hydration}
                 protection={product.protection}
                 bestSeller={product.bestSeller}
-              />
+              >
+                <button
+                  className={
+                    favorites.includes(product.id)
+                      ? "glow-heart glow-heart-active"
+                      : "glow-heart"
+                  }
+                  onClick={() => toggleFavorite(product.id)}
+                >
+                  {favorites.includes(product.id) ? "❤️" : "🤍"}
+                </button>
+              </ProductItem>
             ) : null
           )}
         </ul>
